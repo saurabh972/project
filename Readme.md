@@ -12,3 +12,6 @@
 - npm i mongoose-aggregate-paginate-v2 -> allow to aggregation pipline query in mongoDb
 - npm i bcrypt  -> hash your password 
 - npm i jsonwebtoken-> generate token
+
+# Stop execution code
+-(console.log(req.user);process.exit());
