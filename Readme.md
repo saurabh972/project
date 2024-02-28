@@ -2,7 +2,7 @@
 # In this project i will use 
 - node.js
 - express.js
-- mongoDb)
+- mongoDb
 
 - (gitignore) {https://mrkandreev.name/snippets/gitignore-generator/#Node}
 
@@ -15,3 +15,5 @@
 
 # Stop execution code
 -(console.log(req.user);process.exit());
+
+# link(https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
