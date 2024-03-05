@@ -104,12 +104,10 @@ const publishVideo = asyncHandler(async(req,res)=>{
 
 const getVideoById = asyncHandler(async (req, res) => {
     const videoId  = req.params.videoId;
-console.log(videoId);
+
     if(!videoId){
         throw new ApiError(400 , "Video id is required")
     }
- 
-
 
     const video = await Video.findById(videoId.replace(":",""))
 
@@ -124,8 +122,56 @@ console.log(videoId);
     )
 })
 
+const updateVideo = asyncHandler(async (req, res) => {
+    //TODO: update video details like title, description, thumbnail
+    const { videoId } = req.params;
+    if(!videoId){
+        throw new ApiError(400 , "Video id is required")
+    }
+
+    const {title,description} = req.body;
+
+    if([title,description].some((field)=>field?.trim()==="")){
+        throw new ApiError(400,"All field are required")
+    }
+    
+
+    const thumbnailLocalPath = req.file?.path;
+
+    if(!thumbnailLocalPath){
+        throw new ApiError(400,"Thumbnail file missing")
+    }
+
+    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+    if(!thumbnail.url){
+        throw new ApiError(400,"Error while uploading on cover image")
+    }
+
+    const video = await Video.findByIdAndUpdate(
+        videoId.replace(":",""),
+        {
+            $set:{
+                title:title,
+                description:description,
+                thumbnail:thumbnail.url
+            }
+        },
+        {
+            new:true
+        }
+    );
+    
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,video,"Video uploaded d")
+    )
+})
+
 export{
     getAllVideos,
     publishVideo,
-    getVideoById
+    getVideoById,
+    updateVideo
 }
