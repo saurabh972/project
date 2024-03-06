@@ -101,7 +101,6 @@ const publishVideo = asyncHandler(async(req,res)=>{
     )
 })
 
-
 const getVideoById = asyncHandler(async (req, res) => {
     const videoId  = req.params.videoId;
 
@@ -160,8 +159,22 @@ const updateVideo = asyncHandler(async (req, res) => {
             new:true
         }
     );
-    
 
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,video,"Video uploaded d")
+    )
+})
+
+const deleteVideo = asyncHandler(async(req,res)=>{
+    const { videoId } = req.params
+    if(!videoId){
+        throw new ApiError(400 , "Video id is required")
+    }
+
+    const video = await Video.findByIdAndDelete(videoId.replace(":",""))
+    
     return res
     .status(200)
     .json(
@@ -173,5 +186,6 @@ export{
     getAllVideos,
     publishVideo,
     getVideoById,
-    updateVideo
+    updateVideo,
+    deleteVideo
 }
