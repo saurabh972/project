@@ -54,9 +54,9 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 const publishVideo = asyncHandler(async(req,res)=>{
 
-    const {title,description,isPublish}= req.body;
+    const {title,description}= req.body;
 
-    if([title,description,isPublish].some((field)=>field?.trim()==="")){
+    if([title,description].some((field)=>field?.trim()==="")){
         throw new ApiError(400,"All field are required")
     }
 
@@ -80,7 +80,7 @@ const publishVideo = asyncHandler(async(req,res)=>{
         {
             title:title,
             description:description,
-            isPublished:isPublish,
+            isPublished:false,
             owner :req.user?._id,
             duration:videoFile?.duration || "",
             videoFile:videoFile?.url || "",
@@ -163,7 +163,7 @@ const updateVideo = asyncHandler(async (req, res) => {
     return res
     .status(200)
     .json(
-        new ApiResponse(200,video,"Video uploaded d")
+        new ApiResponse(200,video,"Video uploaded successfully")
     )
 })
 
@@ -178,7 +178,26 @@ const deleteVideo = asyncHandler(async(req,res)=>{
     return res
     .status(200)
     .json(
-        new ApiResponse(200,video,"Video uploaded d")
+        new ApiResponse(200,video,"Video delete successfully")
+    )
+})
+
+const togglePublishStatus = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    if(!videoId){
+        throw new ApiError(400 , "Video id is required")
+    }
+
+    const video = await Video.findByIdAndUpdate(
+        videoId.replace(":",""),
+        {isPublished:true},
+        {new:true}
+    );
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,video ,"Video live successfully")
     )
 })
 
@@ -187,5 +206,6 @@ export{
     publishVideo,
     getVideoById,
     updateVideo,
-    deleteVideo
+    deleteVideo,
+    togglePublishStatus
 }
