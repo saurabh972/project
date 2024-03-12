@@ -88,8 +88,8 @@ const publishVideo = asyncHandler(async(req,res)=>{
         }
     );
 
-     //check video added or not
-     const createdVideo = await Video.findById(video._id);
+    //check video added or not
+    const createdVideo = await Video.findById(video._id);
      if(!createdVideo){
         throw new ApiError(500 , "Something went worng while upload video")
     }

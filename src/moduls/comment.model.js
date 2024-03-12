@@ -4,7 +4,7 @@ import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 const commentSchema = new Schema({
         content:{
             type:String,
-            required:ture,
+            required:true,
         },
         video:{
             type:Schema.Types.ObjectId,
@@ -20,6 +20,6 @@ const commentSchema = new Schema({
     }
 )
 
-videoSchema.plugin(mongooseAggregatePaginate);//add plugin
+commentSchema.plugin(mongooseAggregatePaginate);//add plugin
 export const Comment = mongoose.model('Comment',commentSchema)
 
