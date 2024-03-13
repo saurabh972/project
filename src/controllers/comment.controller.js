@@ -13,6 +13,10 @@ const addComment = asyncHandler(async(req,res)=>{
         throw new ApiError(400,"Content field are required")
     }
 
+    if(videoId.replace(":","")){
+        throw new ApiError(400 , "Video id is required")
+    }
+
     const comment = await Comment.create(
         {
             content:content,
@@ -35,10 +39,55 @@ const addComment = asyncHandler(async(req,res)=>{
 })
 
 const updateComment = asyncHandler(async (req, res) => {
-    // TODO: update a comment
+
+    const commentId = req.params.commentId;
+    if(!commentId.replace(":","")){
+        throw new ApiError(400 , "Comment id is required")
+    }
+
+    const {content} = req.body;
+    if(!content){
+        throw new ApiError(400 , "Comment id is required")
+    }
+  
+
+    const comment = await Comment.findByIdAndUpdate(
+        commentId.replace(":",""),
+        {
+            $set:{
+                content:content
+            }
+        },
+        {
+            new:true
+        }
+    );
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,comment,"Comment update successfully")
+    )
+
+})
+
+const deleteComment = asyncHandler(async (req,res)=>{
+    const commentId = req.params.commentId;
+    if(!commentId.replace(":","")){
+        throw new ApiError(400 , "Comment id is required")
+    }
+
+    const comment = await Comment.findByIdAndDelete(commentId.replace(":",""))
+    
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,comment,"Comment delete successfully")
+    )
 })
 
 export {
     addComment,
-    updateComment
+    updateComment,
+    deleteComment
 }
