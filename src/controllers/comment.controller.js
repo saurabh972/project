@@ -1,9 +1,66 @@
+import mongoose from "mongoose";
 import { Comment } from "../moduls/comment.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 
+const getVideoComment = asyncHandler(async(req,res)=>{
+     //TODO: get all comments for a video
+     const {videoId} = req.params
+     console.log(videoId)
+     const {page = 1, limit = 10} = req.query
+
+     const pipeline = [
+        {
+            $match:{
+                video: new mongoose.Types.ObjectId(videoId.replace(":",""))
+            }
+        },
+        {
+            $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"userComment",
+                pipeline:[
+                    {
+                        $project:{
+                            _id:0,
+                            username:1,
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $project: {
+               content:1,
+               userComment:1
+            }
+        }
+    ];
+
+    // Create an aggregation object
+    const aggregation = Comment.aggregate(pipeline);
+
+    const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        // sort:{
+        //     [sortBy] : sortType === 'asc' ? 1 : -1
+        // }
+    };
+ 
+     // Paginate the results
+     const result = await Comment.aggregatePaginate(aggregation, options);
+console.log(result );
+     return res
+     .status(200)
+     .json(
+         new ApiResponse(200,result,"Comment added successfully")
+     )
+})
 
 const addComment = asyncHandler(async(req,res)=>{
     const videoId  = req.params.videoId;
@@ -87,6 +144,7 @@ const deleteComment = asyncHandler(async (req,res)=>{
 })
 
 export {
+    getVideoComment,
     addComment,
     updateComment,
     deleteComment
