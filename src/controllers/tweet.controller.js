@@ -38,8 +38,9 @@ const deleteTweet = asyncHandler(async(req,res)=>{
 const updateTweet = asyncHandler(async(req,res)=>{
     //TODO: update tweet
     const tweetId  = req.params.tweetId;
-    const {content}= req.body;
-console.log(tweetId);
+    //detecting objects
+    const content = req.body.content;
+
     if([content].some((field)=>field?.trim()==="")){
         throw new ApiError(400 , "Content field is required")
     }
